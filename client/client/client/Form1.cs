@@ -70,11 +70,11 @@ namespace client
                         Byte[] buffer = new Byte[64];
                         clientSocket.Receive(buffer);
 
-                        //check whether the server wants to disconnect the client or not
-                        string incomingMessage = Encoding.Default.GetString(buffer);
-                        string test = incomingMessage.Substring(0, 16);
-
-                        //if server disconnects client, send a message to server and print it to client logs
+                        //Parse the incomming messages
+                        string incomingMessage = Encoding.Default.GetString(buffer);    
+                        string test = incomingMessage.Substring(0, 16);                 
+                                                                                        
+                        //If the message is "TERMINATE CLIENT" terminate the connection to the server
                         if (test == "TERMINATE CLIENT")
                         {
                             connected = false;
@@ -121,7 +121,7 @@ namespace client
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            
+            //get rid of empty spaces and send the answer to the server
             string answer = AnswerText.Text;
             answer.Trim('\0');
             Logs.AppendText("Answer: " + answer + "\n");
@@ -137,6 +137,7 @@ namespace client
 
         private void Disconnect_Click(object sender, EventArgs e)
         {
+            //disconnect from the server and print a message accordingly
             connected = false;
             terminating = true;
 
