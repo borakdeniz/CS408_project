@@ -95,7 +95,17 @@ namespace server
                 }
                 catch
                 {
+                    if (terminating)
+                    {
+                        listening = false;
 
+                    }
+                    else
+                    {
+                        richTextBox1.AppendText("Socket stopped working \n");
+                        listen_button.Enabled = true;
+                        listening = false;                      
+                    }
                 }
             }
         }
