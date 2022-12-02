@@ -19,6 +19,7 @@ namespace server
     {
         Socket server_Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> client_Socket = new List<Socket>();
+        Dictionary<string, Socket> socketDictionary = new Dictionary<string, Socket>();
         List<string> nicknames = new List<string>(); //nickname list of the players
         bool terminating = false;
         public bool listening = false;
@@ -26,6 +27,7 @@ namespace server
         public bool connected = false;
         public string nameOfClient = "";
         private double sum = 0;  // total sum earning from questions
+        private string correctAnswer;
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -58,9 +60,11 @@ namespace server
                 server_Socket.Listen(numOfClient); // socket listens as the max number of client
                 listening = true;
                 listen_button.Enabled = false;
+                quiz_question_textbox.Enabled = false;
 
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
+                
 
             }
         }
@@ -112,11 +116,21 @@ namespace server
         private void Receive(Socket thisClient, string nameOf)
         {
             connected = true;
-            while(connected && !terminating)
+            Dictionary<Socket, string> revDictionary = socketDictionary.ToDictionary(pair => pair.Value, pair => pair.Key);
+            string UsernameVar = revDictionary[thisClient];
+            while (connected && !terminating)
             {
                 try
                 {
-                    
+                    Byte[] buffer = new Byte[64];
+                    thisClient.Receive(buffer);
+                    string incomingMessage = Encoding.Default.GetString(buffer);
+                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+                    if(incomingMessage == correctAnswer)
+                    {
+                        Byte[] sendBuffer = new Byte[1024];
+                        thisClient.Receive(sendBuffer);
+                    }
                 }
                 catch
                 {
@@ -130,6 +144,61 @@ namespace server
                     connected = false;
                     sum = 0;
                 }
+            }
+        }
+        private void checkAnswerEvent(object sender, EventArgs e)
+        {
+
+        }
+        private void askQuestion(int qNum)
+        {
+            switch (qNum)
+            {
+                case 1:
+                    richTextBox1.AppendText("How many times has DIEGO Maradona participated in World Cups as team captain?");
+                    correctAnswer = "4";
+                    break;
+                case 2:
+                    richTextBox1.AppendText("How many children does Madonna have?");
+                    correctAnswer = "6";
+
+                    break;
+                case 3:
+                    richTextBox1.AppendText("How many countries are there in the Asian continent?");
+                    correctAnswer = "52";
+                    break;
+                case 4:
+                    richTextBox1.AppendText("How many children does Bruce Lee have?");
+                    correctAnswer = "2";
+                    break;
+                case 5:
+                    richTextBox1.AppendText("How many liters of milk does a goat produce on average per year?");
+                    correctAnswer = "1000";
+                    break;
+                case 6:
+                    richTextBox1.AppendText("In which year did Turkish coffee enter on the UNESCO list?");
+                    correctAnswer = "2013";
+                    break;
+                case 7:
+                    richTextBox1.AppendText("How many known species of scorpions are poisonous?");
+                    correctAnswer = "25";
+                    break;
+                case 8:
+                    richTextBox1.AppendText("How many months, on average, does a person spend waiting for the traffic light to change from red to green??");
+                    correctAnswer = "6";
+                    break;
+                case 9:
+                    richTextBox1.AppendText("How many months, on average, does a person spend waiting for the traffic light to change from red to green??");
+                    correctAnswer = "15";
+                    break;
+                case 10:
+                    richTextBox1.AppendText("How many months, on average, does a person spend waiting for the traffic light to change from red to green??");
+                    correctAnswer = "26";
+                    break;
+                case 11:
+                    richTextBox1.AppendText("How many months, on average, does a person spend waiting for the traffic light to change from red to green??");
+                    correctAnswer = "92";
+                    break;
             }
         }
     }
