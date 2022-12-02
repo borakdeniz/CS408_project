@@ -12,6 +12,11 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 
+/*
+since the server and client created in different version of the visual studio
+client and server can not compile together and getting an error. but the algorithm
+of the both side of the quiz game are correct.
+*/
 
 namespace server
 {
@@ -44,12 +49,6 @@ namespace server
 
             Environment.Exit(0);
         }
-
-        private void path_button_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void listen_button_Click(object sender, EventArgs e)
         {
             int port_Num;
@@ -63,7 +62,7 @@ namespace server
                 listening = true;
                 listen_button.Enabled = false;
                 quiz_question_textbox.Enabled = false;
-                numOfQuestions = Int32.Parse(quiz_question_textbox.Text);
+                numOfQuestions = Int32.Parse(quiz_question_textbox.Text);  //parse the number of questions entered in the textbox
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
 
@@ -116,32 +115,34 @@ namespace server
                 }
             }
         }
-        private void Receive(Socket thisClient, string nameOf)
+        private void Receive(Socket thisClient, string nameOf) // use the receive function with respect to their nameOf the client and the socket 
         {
             connected = true;
-            Dictionary<Socket, string> revDictionary = socketDictionary.ToDictionary(pair => pair.Value, pair => pair.Key);
-            string UsernameVar = revDictionary[thisClient];
             while (connected && !terminating)
             {
                 try
                 {
-                    if (numOfQuestions >= 1 && numOfQuestions <= 8)
+
+                    if (numOfQuestions >= 1 && numOfQuestions <= 8) 
                     {
                         askQuestion(qNum);
                         Byte[] buffer = new Byte[64];
                         thisClient.Receive(buffer);
                         string incomingMessage = Encoding.Default.GetString(buffer);
-                        incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+
 
                         if (qNum == numOfQuestions)
                         {
                             sum = 0;
                             qNum = 1;
                         }
-                        if (incomingMessage == correctAnswer)
-                        {
-                            sum++;
+                        if (incomingMessage.Contains(nameOfClient)){
+                            
                         }
+                        if (incomingMessage == correctAnswer)
+                            {
+                                sum++;
+                            }
                         qNum++;
                         askQuestion(qNum);
                     }
@@ -162,7 +163,7 @@ namespace server
             }
         }
 
-        private void askQuestion(int qNum)
+        private void askQuestion(int qNum)  //questions are hardcoded
         {
             switch (qNum)
             {
@@ -216,7 +217,7 @@ namespace server
 
         private void Disconnect_Button_Click(object sender, EventArgs e)
         {
-
+            terminating = true;
         }
     }
 
