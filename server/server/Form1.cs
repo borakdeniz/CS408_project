@@ -28,6 +28,8 @@ namespace server
         public string nameOfClient = "";
         private double sum = 0;  // total sum earning from questions
         private string correctAnswer;
+        private int numOfQuestions;
+        public int qNum = 0;
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -54,17 +56,17 @@ namespace server
 
             if (Int32.TryParse(port_textBox.Text, out port_Num))
             {
-                
+
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port_Num);
                 server_Socket.Bind(endPoint);
                 server_Socket.Listen(numOfClient); // socket listens as the max number of client
                 listening = true;
                 listen_button.Enabled = false;
                 quiz_question_textbox.Enabled = false;
-
+                numOfQuestions = Int32.Parse(quiz_question_textbox.Text);
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
-                
+
 
             }
         }
@@ -87,14 +89,15 @@ namespace server
                     }
                     else
                     {
-                        client_Socket.Add(newClient);   
+                        client_Socket.Add(newClient);
                         nicknames.Add(nameOfClient);
 
                         richTextBox1.AppendText(nameOfClient + " is connected to the server");
                         Thread receiveThread = new Thread(() => Receive(newClient, nameOfClient));
                         receiveThread.Start();
+
                     }
-                    
+
 
                 }
                 catch
@@ -108,7 +111,7 @@ namespace server
                     {
                         richTextBox1.AppendText("Socket stopped working \n");
                         listen_button.Enabled = true;
-                        listening = false;                      
+                        listening = false;
                     }
                 }
             }
@@ -122,15 +125,27 @@ namespace server
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
-                    thisClient.Receive(buffer);
-                    string incomingMessage = Encoding.Default.GetString(buffer);
-                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                    if(incomingMessage == correctAnswer)
+                    if (numOfQuestions >= 1 && numOfQuestions <= 8)
                     {
-                        Byte[] sendBuffer = new Byte[1024];
-                        thisClient.Receive(sendBuffer);
+                        askQuestion(qNum);
+                        Byte[] buffer = new Byte[64];
+                        thisClient.Receive(buffer);
+                        string incomingMessage = Encoding.Default.GetString(buffer);
+                        incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+
+                        if (qNum == numOfQuestions)
+                        {
+                            sum = 0;
+                            qNum = 1;
+                        }
+                        if (incomingMessage == correctAnswer)
+                        {
+                            sum++;
+                        }
+                        qNum++;
+                        askQuestion(qNum);
                     }
+
                 }
                 catch
                 {
@@ -146,10 +161,7 @@ namespace server
                 }
             }
         }
-        private void checkAnswerEvent(object sender, EventArgs e)
-        {
 
-        }
         private void askQuestion(int qNum)
         {
             switch (qNum)
@@ -200,6 +212,11 @@ namespace server
                     correctAnswer = "92";
                     break;
             }
+        }
+
+        private void Disconnect_Button_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

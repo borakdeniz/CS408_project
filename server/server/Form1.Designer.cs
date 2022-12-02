@@ -34,7 +34,7 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.quiz_question_textbox = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.Disconnect_Button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // port_label
@@ -88,22 +88,23 @@
             this.quiz_question_textbox.Size = new System.Drawing.Size(100, 22);
             this.quiz_question_textbox.TabIndex = 8;
             // 
-            // button1
+            // Disconnect_Button
             // 
-            this.button1.Font = new System.Drawing.Font("Calibri", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(375, 89);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(268, 72);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "DISCONNECT";
-            this.button1.UseVisualStyleBackColor = true;
+            this.Disconnect_Button.Font = new System.Drawing.Font("Calibri", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Disconnect_Button.Location = new System.Drawing.Point(375, 89);
+            this.Disconnect_Button.Name = "Disconnect_Button";
+            this.Disconnect_Button.Size = new System.Drawing.Size(268, 72);
+            this.Disconnect_Button.TabIndex = 9;
+            this.Disconnect_Button.Text = "DISCONNECT";
+            this.Disconnect_Button.UseVisualStyleBackColor = true;
+            this.Disconnect_Button.Click += new System.EventHandler(this.Disconnect_Button_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(680, 431);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.Disconnect_Button);
             this.Controls.Add(this.quiz_question_textbox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.richTextBox1);
@@ -125,7 +126,7 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox quiz_question_textbox;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button Disconnect_Button;
     }
 }
 
